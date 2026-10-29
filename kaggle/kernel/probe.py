@@ -6,8 +6,8 @@ import time
 from pathlib import Path
 
 VLLM = "vllm==0.32.0"
-# a small model with the llama architecture so the probe goes through the same vllm code as the real models
-TINY = "HuggingFaceTB/SmolLM2-360M-Instruct"
+# a small llama model whose 32 heads split over two gpus like the real models do
+TINY = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
 PACKAGES = "torch|transformers|tokenizers|peft|vllm|sentencepiece|safetensors|huggingface.hub|accelerate|flashinfer.python|xformers|triton"
 OUT = Path("/kaggle/working/probe.json")
 
