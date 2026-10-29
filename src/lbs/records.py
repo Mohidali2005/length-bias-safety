@@ -17,7 +17,7 @@ def write_jsonl(path,rows):
     """Write rows to a jsonl file through a temporary file so a crash never leaves half a file"""
     path.parent.mkdir(parents=True,exist_ok=True)
     tmp = path.with_name(path.name+".tmp")
-    with open(tmp,"w",encoding="utf-8") as f:
+    with open(tmp,"w",encoding="utf-8",newline="\n") as f:
         for row in rows:
             f.write(json.dumps(row,ensure_ascii=False)+"\n")
     os.replace(tmp,path)
@@ -27,7 +27,7 @@ def write_json(path,data):
     """Write one json file through a temporary file so a crash never leaves half a file"""
     path.parent.mkdir(parents=True,exist_ok=True)
     tmp = path.with_name(path.name+".tmp")
-    tmp.write_text(json.dumps(data,indent=1,ensure_ascii=False),encoding="utf-8")
+    tmp.write_text(json.dumps(data,indent=1,ensure_ascii=False),encoding="utf-8",newline="\n")
     os.replace(tmp,path)
 
 

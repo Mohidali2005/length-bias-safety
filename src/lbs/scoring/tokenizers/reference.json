@@ -1,0 +1,15 @@
+{
+ "transformers": "4.57.1",
+ "harmbench_cls": {
+  "clipped": "d6e2ab71b4c8cfe5c7ef2fa3032fe3cd679f5b0706fcd10ec1924d8bb4e4ff63",
+  "inputs": "f9873de625674ff40ee7bc89e26a4f2e5efe615a115711d39e0f08b4a6cf81fc",
+  "outputs": "1af8d5256770193f3f9141328309ab631068fa16bd125290f04e5865a60435ea",
+  "count": 7578
+ },
+ "wildguard": {
+  "clipped": "08c20f6e8dc57bdd8fdcab414646bd13c13c990f1567f7a9c0c3c207949889c7",
+  "inputs": "49328de3d421fad717fa91e9949e7aa1ea5b048bde4d29b9d490b6166987b34b",
+  "outputs": "7b450419b7f70b72afb9a78c243bd7b134095c19c66bba17c025528bad4098ad",
+  "count": 7578
+ }
+}

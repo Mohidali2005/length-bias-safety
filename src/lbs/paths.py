@@ -10,3 +10,4 @@ RESULTS = Path(os.environ.get("LBS_RESULTS",ROOT/"results"))
 MODELS = Path(os.environ.get("LBS_MODELS",ROOT/"cache"/"models"))
 GEN = RESULTS/"gen"
 SCORES = RESULTS/"scores"
+TOKENIZERS = Path(__file__).resolve().parent/"scoring"/"tokenizers"

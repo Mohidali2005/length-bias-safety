@@ -9,6 +9,7 @@ from lbs import records
 from lbs.paths import GEN
 from lbs.paths import MODELS
 from lbs.paths import SCORES
+from lbs.scoring import tokens
 from lbs.scoring.templates import WILDGUARD
 
 
@@ -30,8 +31,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     settings = config.SCORERS["wildguard"]
-    # the official package loads wildguard with the slow tokenizer
-    llm = vllm.LLM(model=str(MODELS/"wildguard"),tokenizer_mode="slow",dtype=config.DTYPE,tensor_parallel_size=config.TENSOR_PARALLEL,max_model_len=config.CLS_MAX_LEN,gpu_memory_utilization=config.GPU_MEMORY,seed=config.SEED)
+    # tokenizing ourselves because newer transformers split this sentencepiece tokenizer differently from the one wildguard was built with
+    tokenizer = tokens.load("wildguard")
+    llm = vllm.LLM(model=str(MODELS/"wildguard"),dtype=config.DTYPE,tensor_parallel_size=config.TENSOR_PARALLEL,max_model_len=config.CLS_MAX_LEN,gpu_memory_utilization=config.GPU_MEMORY,seed=config.SEED)
     params = vllm.SamplingParams(temperature=0.0,top_p=1.0,max_tokens=config.WILDGUARD_MAX_TOKENS)
 
     for name in records.pending("wildguard"):
@@ -39,11 +41,12 @@ if __name__ == "__main__":
             break
         rows = [r for r in records.read_jsonl(GEN/f"{name}.jsonl") if r["set"] in settings["sets"]]
         # judging every condition against the original request so the brief control is compared fairly
-        inputs = [WILDGUARD.format(prompt=r["prompt"],response=(r["prefill"] or "")+r["response"]) for r in rows]
-        outputs = llm.generate(inputs,params)
+        inputs = [tokenizer.encode(WILDGUARD.format(prompt=r["prompt"],response=(r["prefill"] or "")+r["response"])).ids for r in rows]
+        assert max(len(ids) for ids in inputs)+config.WILDGUARD_MAX_TOKENS<=config.CLS_MAX_LEN,"a classifier input is longer than the context window"
+        outputs = llm.generate([{"prompt_token_ids":ids} for ids in inputs],params)
         scores = []
         for r,out in zip(rows,outputs):
-            answer = out.outputs[0].text
+            answer = tokenizer.decode(list(out.outputs[0].token_ids),skip_special_tokens=True)
             scores.append({"condition":name,"set":r["set"],"id":r["id"],"sample":r["sample"],**parse(answer),"answer":answer})
         records.write_jsonl(SCORES/"wildguard"/f"{name}.jsonl",scores)
         errors = sum(s["parse_error"] for s in scores)

@@ -62,10 +62,10 @@ def run(resume_from=None,gen_hours=config.GEN_DEADLINE_H,hard_hours=config.HARD_
             status = f"skipped because {brief} has no answers"
         elif not step(["lbs.fetch",condition["model"]]):
             status = "failed while fetching the model"
-        elif not step(["lbs.generation.generate",name,str(MODELS/condition["model"])]):
-            status = "failed while generating"
         else:
-            status = "done"
+            # trusting the done file over the exit code because vllm can exit noisily after its work is saved
+            step(["lbs.generation.generate",name,str(MODELS/condition["model"])])
+            status = "done" if (GEN/f"{name}.done.json").exists() else "failed while generating"
         manifest["conditions"][name] = status
         records.write_json(RESULTS/"manifest.json",manifest)
 
@@ -85,12 +85,14 @@ def run(resume_from=None,gen_hours=config.GEN_DEADLINE_H,hard_hours=config.HARD_
             status = "skipped because the hard deadline passed"
         elif not all(step(["lbs.fetch",model]) for model in settings["models"]):
             status = "failed while fetching the model"
-        elif not step([f"lbs.scoring.{scorer}","--deadline",str(hard_deadline)]):
-            status = "failed while scoring"
-        elif records.pending(scorer):
-            status = "stopped at the hard deadline"
         else:
-            status = "done"
+            step([f"lbs.scoring.{scorer}","--deadline",str(hard_deadline)])
+            if not records.pending(scorer):
+                status = "done"
+            elif time.time()>=hard_deadline:
+                status = "stopped at the hard deadline"
+            else:
+                status = "failed while scoring"
         manifest["scorers"][scorer] = status
         clear_models(set())
         records.write_json(RESULTS/"manifest.json",manifest)

@@ -34,11 +34,12 @@ def build():
             path.write_bytes(response.content)
         files[name] = path
 
-    with open(files["harmbench"],encoding="utf-8") as f:
+    # opening csv files with newline set to empty as the csv module requires
+    with open(files["harmbench"],encoding="utf-8",newline="") as f:
         harmbench = [r for r in csv.DictReader(f) if r["FunctionalCategory"]=="standard"]
-    with open(files["strongreject"],encoding="utf-8") as f:
+    with open(files["strongreject"],encoding="utf-8",newline="") as f:
         strongreject = list(csv.DictReader(f))
-    with open(files["xstest"],encoding="utf-8") as f:
+    with open(files["xstest"],encoding="utf-8",newline="") as f:
         xstest = list(csv.DictReader(f))
     alpaca = json.loads(files["alpaca_eval"].read_text(encoding="utf-8"))
 
@@ -57,7 +58,8 @@ def build():
         assert len(records)==EXPECTED[name],f"{name} has {len(records)} prompts"
         assert len(set(ids))==len(ids),f"{name} has duplicate ids"
         assert all(r["prompt"].strip() for r in records),f"{name} has an empty prompt"
-        with open(PROMPTS/f"{name}.jsonl","w",encoding="utf-8") as f:
+        # writing plain newlines so the files are byte identical on windows and linux
+        with open(PROMPTS/f"{name}.jsonl","w",encoding="utf-8",newline="\n") as f:
             for r in records:
                 f.write(json.dumps({"set":name,**r},ensure_ascii=False)+"\n")
         print(f"{name}: {len(records)} prompts")
@@ -68,7 +70,7 @@ def build():
         "sources":{name:{"url":SOURCES[name],"sha256":hashlib.sha256(path.read_bytes()).hexdigest()} for name,path in files.items()},
         "counts":{name:len(records) for name,records in sets.items()},
     }
-    (PROMPTS/"manifest.json").write_text(json.dumps(manifest,indent=1),encoding="utf-8")
+    (PROMPTS/"manifest.json").write_text(json.dumps(manifest,indent=1),encoding="utf-8",newline="\n")
 
 
 if __name__ == "__main__":
