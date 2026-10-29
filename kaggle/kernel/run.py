@@ -11,8 +11,8 @@ from pathlib import Path
 from kaggle_secrets import UserSecretsClient
 
 # smoke runs every code path on a few prompts and full runs the whole study
-MODE = "smoke"
-COMMIT = "1930c851e58ba5860caa254252e902901a10884f"
+MODE = "full"
+COMMIT = "82cf9f45bdc86bed351419c9cb4427009052f546"
 REPO = "https://github.com/Mohidali2005/length-bias-safety.git"
 INSTALL = ["vllm==0.32.0","peft==0.20.0","sentencepiece==0.2.2"]
 CODE = Path("/tmp/code")
