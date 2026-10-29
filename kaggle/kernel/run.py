@@ -54,6 +54,8 @@ start = time.time()
 subprocess.run([sys.executable,"-m","pip","install","--quiet",*INSTALL],check=True)
 # the preinstalled torchaudio is built for another cuda version and breaks the transformers import while no audio is used
 subprocess.run([sys.executable,"-m","pip","uninstall","--quiet","-y","torchaudio"],check=True)
+# the preinstalled torchao is too old for peft and nothing here needs it
+subprocess.run([sys.executable,"-m","pip","uninstall","--quiet","-y","torchao"],check=True)
 print(f"installed packages in {(time.time()-start)/60:.1f} min")
 
 env = dict(os.environ,PYTHONPATH=str(CODE/"src"),LBS_RESULTS=str(RESULTS),LBS_MODELS=str(MODELS),HF_TOKEN=hf_token,VLLM_LOGGING_LEVEL="WARNING")

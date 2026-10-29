@@ -90,7 +90,7 @@ def test_engine_settings(full_run):
         model = config.MODELS[c["model"]]
         assert Path(event["model"]).name==c["model"]
         assert event["n_prompts"]==5*len(c["sets"])*c["samples"]
-        assert event["params"]=={"n":1,"temperature":c["temperature"],"top_p":1.0,"repetition_penalty":1.0,"max_tokens":512,"stop_token_ids":model["stop"]}
+        assert event["params"]=={"n":1,"temperature":c["temperature"],"top_p":1.0,"repetition_penalty":1.0,"max_tokens":config.MAX_NEW_TOKENS,"stop_token_ids":model["stop"]}
         ids = event["first_prompt"]["prompt_token_ids"]
         bos = 1 if c["model"].startswith("pr_mis") else 128000
         assert ids.count(bos)==int(model["bos"])

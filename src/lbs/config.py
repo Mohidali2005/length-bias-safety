@@ -58,7 +58,8 @@ SCORERS = {
 }
 
 SEED = 0
-MAX_NEW_TOKENS = 512
+# the long model writes past 512 tokens on most prompts so a smaller cap would hide the length gap
+MAX_NEW_TOKENS = 1024
 GEN_MAX_LEN = 2048
 # staying inside the 4096 token sliding window of the mistral based classifiers
 CLS_MAX_LEN = 4096
