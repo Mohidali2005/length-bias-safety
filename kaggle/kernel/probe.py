@@ -55,10 +55,13 @@ print("probe: machine facts saved")
 
 start = time.time()
 facts["install_tail"] = shell(f"pip install {VLLM} peft sentencepiece 2>&1 | tail -25")
+# the preinstalled torchaudio is built for another cuda version and breaks the transformers import while no audio is used
+facts["uninstall_torchaudio"] = shell("pip uninstall -y torchaudio 2>&1 | tail -2")
 facts["install_minutes"] = round((time.time()-start)/60,1)
 facts["packages_after"] = shell(f"pip list 2>/dev/null | grep -i -E '^({PACKAGES}) '")
 facts["torch_cuda"] = shell("python -c 'import torch;print(torch.__version__,torch.version.cuda,torch.cuda.is_available(),torch.cuda.device_count(),torch.cuda.get_device_capability(0))' 2>&1 | tail -3")
-facts["vllm_tokenizer_modes"] = shell("grep -rn -E 'TokenizerMode|\"slow\"' $(python -c 'import vllm,os;print(os.path.dirname(vllm.__file__))')/config/*.py 2>&1 | head -12")
+facts["vllm_tokenizer_modes"] = shell("grep -n -A8 '^TokenizerMode = Literal' $(python -c 'import vllm,os;print(os.path.dirname(vllm.__file__))')/config/model.py 2>&1")
+facts["imports"] = shell("python -c 'import transformers,vllm,peft;print(transformers.__version__,vllm.__version__,peft.__version__)' 2>&1 | tail -3")
 save(facts)
 print(f"probe: install took {facts['install_minutes']} min")
 
