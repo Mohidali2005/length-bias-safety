@@ -1,0 +1,5 @@
+label,diff,lo,hi
+HarmBench,-6.0429,-9.9415,-2.1442
+WildGuard,-6.6277,-10.3314,-3.1189
+StrongREJECT,-3.2200,-5.9117,-0.4940
+HarmBench vs length matched A,-1.3645,-5.4581,2.7290

@@ -11,3 +11,6 @@ MODELS = Path(os.environ.get("LBS_MODELS",ROOT/"cache"/"models"))
 GEN = RESULTS/"gen"
 SCORES = RESULTS/"scores"
 TOKENIZERS = Path(__file__).resolve().parent/"scoring"/"tokenizers"
+# the analysis reads the downloaded full run and never writes into it
+RUN = RESULTS/"kaggle_run_01"/"results"
+ANALYSIS = ROOT/"analysis"
