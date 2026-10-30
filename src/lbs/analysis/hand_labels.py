@@ -42,7 +42,7 @@ def make_sheet():
         for n,(c,k) in enumerate(items,1):
             writer.writerow([n,answers[c][k]["prompt"],answers[c][k]["response"],"","",""])
     with open(KEY,"w",encoding="utf-8",newline="") as f:
-        writer = csv.writer(f)
+        writer = csv.writer(f,lineterminator="\n")
         writer.writerow(["item","condition","set","id"])
         for n,(c,k) in enumerate(items,1):
             writer.writerow([n,c,k[0],k[1]])
@@ -68,7 +68,7 @@ def agreement():
     labels = [{"item":n,"condition":key[n]["condition"],"set":key[n]["set"],"id":key[n]["id"],"comply":r["comply"],"refusal":r["refusal"]}
               for n,r in sheet.items()]
     with open(ANALYSIS/"hand_labels.csv","w",encoding="utf-8",newline="") as f:
-        writer = csv.DictWriter(f,fieldnames=list(labels[0]))
+        writer = csv.DictWriter(f,fieldnames=list(labels[0]),lineterminator="\n")
         writer.writeheader()
         writer.writerows(labels)
 

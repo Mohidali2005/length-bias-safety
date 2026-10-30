@@ -268,11 +268,11 @@ def write():
     (ANALYSIS/"stats").mkdir(parents=True,exist_ok=True)
     (ANALYSIS/"stats"/"effects.md").write_text("\n".join(lines),encoding="utf-8",newline="\n")
     with open(ANALYSIS/"stats"/"differences.csv","w",encoding="utf-8",newline="") as f:
-        writer = csv.DictWriter(f,fieldnames=list(differences[0]))
+        writer = csv.DictWriter(f,fieldnames=list(differences[0]),lineterminator="\n")
         writer.writeheader()
         writer.writerows({k:(f"{v:.4f}" if isinstance(v,float) else v) for k,v in row.items()} for row in differences)
     with open(ANALYSIS/"stats"/"rates.csv","w",encoding="utf-8",newline="") as f:
-        writer = csv.DictWriter(f,fieldnames=list(csv_rows[0]))
+        writer = csv.DictWriter(f,fieldnames=list(csv_rows[0]),lineterminator="\n")
         writer.writeheader()
         writer.writerows({k:(f"{v:.4f}" if isinstance(v,float) else v) for k,v in row.items()} for row in csv_rows)
     print(f"main analysis written for {len(TABLE)} conditions")
